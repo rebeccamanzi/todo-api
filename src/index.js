@@ -18,6 +18,10 @@ function checksExistsUserAccount(request, response, next) {
   if(!user) {
     return response.status(400).json({error: "User not found"})
   }
+
+  request.user = user;
+
+  return next();
 }
 
 app.post('/users', (request, response) => {
@@ -42,11 +46,8 @@ app.post('/users', (request, response) => {
 });
 
 app.get('/todos', checksExistsUserAccount, (request, response) => {
-  const { username } = request;
-
-  const user = users.filter((user) => user.username === username);
-
-  return response.json(user);
+  const { user } = request;
+  return response.json(user.todos);
 });
 
 app.post('/todos', checksExistsUserAccount, (request, response) => {
